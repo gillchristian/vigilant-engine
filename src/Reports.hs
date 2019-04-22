@@ -12,7 +12,6 @@ import qualified Data.String.Utils as S
 import qualified GHC.Generics      as Generics
 import qualified Matchers          as Mx
 import qualified Text.Read         as Read
-import qualified Text.Regex        as R
 
 type Row = (String, String, String, String, String, String, String, String)
 
