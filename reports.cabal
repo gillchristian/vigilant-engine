@@ -1,0 +1,63 @@
+cabal-version:       2.0
+name:                reports
+version:             0.0.0
+synopsis:            reports of my finances
+description:         reports of my finances
+homepage:            https://github.com/gillchristian/reports
+bug-reports:         https://github.com/gillchristian/reports/issues
+license:             MIT
+license-file:        LICENSE
+author:              Christian Gill
+maintainer:          gillchristiang@gmail.com
+copyright:           2019 Christian Gill
+build-type:          Simple
+extra-doc-files:     README.md
+                   , CHANGELOG.md
+tested-with:         GHC == 8.6.3
+
+source-repository head
+  type:                git
+  location:            https://github.com/gillchristian/reports.git
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Reports
+                       
+
+  build-depends:       base ^>= 4.12.0.0
+                     
+
+  ghc-options:         -Wall
+                       -Wincomplete-uni-patterns
+                       -Wincomplete-record-updates
+                       -Wcompat
+                       -Widentities
+                       -Wredundant-constraints
+                       -fhide-source-paths
+                       -Wmissing-export-lists
+                       -Wpartial-fields
+
+  default-language:    Haskell2010
+
+executable reports
+  hs-source-dirs:      app
+  main-is:             Main.hs
+
+  build-depends:       base ^>= 4.12.0.0
+                     , reports
+                     
+
+  ghc-options:         -Wall
+                       -threaded
+                       -rtsopts
+                       -with-rtsopts=-N
+                       -Wincomplete-uni-patterns
+                       -Wincomplete-record-updates
+                       -Wcompat
+                       -Widentities
+                       -Wredundant-constraints
+                       -fhide-source-paths
+                       -Wmissing-export-lists
+                       -Wpartial-fields
+
+  default-language:    Haskell2010
