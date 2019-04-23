@@ -3,7 +3,7 @@ module Main
   ) where
 
 import qualified Data.Aeson         as Aeson
-import           Reports            (entries)
+import           Parsing            (entries)
 import qualified System.Environment as Env
 import qualified System.IO          as Sys
 
