@@ -13,6 +13,6 @@ processInput file = Aeson.toJSON . entries <$> readFile file
 main :: IO ()
 main = do
   (sts:out:_) <- Env.getArgs -- TODO handle missing files
+  Sys.hPutStrLn Sys.stderr $ "Processing statements from: \"" ++ sts ++ "\""
   processInput sts >>= Aeson.encodeFile out
-  Sys.hPutStrLn Sys.stderr $ "Processed statements from: \"" ++ sts ++ "\""
   Sys.hPutStrLn Sys.stderr $ "Data written to: \"" ++ out ++ "\""
