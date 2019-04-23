@@ -23,6 +23,7 @@ library
   hs-source-dirs:      src
   exposed-modules:     Parsing
                      , Matchers 
+                     , Date
 
   build-depends:       base ^>= 4.12.0.0
                      , regex-compat ^>= 0.95.1

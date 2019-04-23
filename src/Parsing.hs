@@ -10,8 +10,9 @@ import qualified Data.Char         as C
 import qualified Data.Maybe        as M
 import qualified Data.String.Utils as S
 import qualified GHC.Generics      as Generics
-import qualified Matchers          as Mx
 import qualified Text.Read         as Read
+import qualified Matchers          as Mx
+import qualified Date          as Date
 
 type Row = (String, String, String, String, String, String, String, String)
 
@@ -56,8 +57,8 @@ data Balance = Balance
 data Entry = Entry
   { acc         :: String
   , currency    :: Currency
-  , date1       :: String
-  , date2       :: String
+  , date1       :: Maybe Date.Date
+  , date2       :: Maybe Date.Date
   , balance     :: Balance
   , description :: String
   , category    :: Category
@@ -89,35 +90,29 @@ inferCategory amount desc
   | Mx.match Mx.transport desc = Transport
   | Mx.match Mx.clothes desc = Clothes
   | Mx.match Mx.markets desc = Groceries
-  | Mx.match Mx.cash desc && amount < 0 = Cash
   | Mx.match Mx.house desc = House
   | Mx.match Mx.bike desc = Bikes
   | Mx.match Mx.health desc = Health
   | Mx.match Mx.selfcare desc = SelfCare
-  | Mx.match Mx.entertainment desc = Entertainment
-  | Mx.match Mx.volksuni desc && amount < (-10.0) = Study
-  | Mx.match Mx.volksuni desc && amount >= (-10.0) = EatOut
-  | Mx.match Mx.reimbursement desc = Reimbursement
   | Mx.match Mx.gym desc = Gym
   | Mx.match Mx.others desc = Others
   | Mx.match Mx.tax desc = Tax
-  | Mx.match Mx.incoming desc && amount > 0.0 = Incoming
   | Mx.match Mx.cashback desc = CashBack
+  | Mx.match Mx.entertainment desc = Entertainment
+  | Mx.match Mx.reimbursement desc = Reimbursement
+  | Mx.match Mx.cash desc && amount < 0 = Cash
+  | Mx.match Mx.volksuni desc && amount < (-10.0) = Study
+  | Mx.match Mx.volksuni desc && amount >= (-10.0) = EatOut
+  | Mx.match Mx.incoming desc && amount > 0.0 = Incoming
   | otherwise = Unknown
 
-{-
-const strToDate = (str: string): Date => {
-  const [, y, m, d] = /([0-9]{4})([0-9]{2})([0-9]{2})/.exec(str)
-  return new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10) + 1)
-}
--}
 entryOfRow :: Row -> Entry
 entryOfRow (acc, cur, d1, before, after, d2, debit, desc) =
   Entry
     { acc = acc
     , currency = readCurrency cur
-    , date1 = d1
-    , date2 = d2
+    , date1 = Date.readDate d1
+    , date2 = Date.readDate d2
     , balance = balance'
     , description = desc
     , category = inferCategory debit' $ map C.toLower desc
