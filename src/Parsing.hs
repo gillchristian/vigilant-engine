@@ -9,10 +9,10 @@ import qualified Data.Aeson        as Aeson
 import qualified Data.Char         as C
 import qualified Data.Maybe        as M
 import qualified Data.String.Utils as S
+import qualified Date
 import qualified GHC.Generics      as Generics
-import qualified Text.Read         as Read
 import qualified Matchers          as Mx
-import qualified Date          as Date
+import qualified Text.Read         as Read
 
 type Row = (String, String, String, String, String, String, String, String)
 
