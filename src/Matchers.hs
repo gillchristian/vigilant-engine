@@ -1,34 +1,11 @@
 module Matchers
-  ( match
-  , restaurants
-  , food
-  , markets
-  , clothes
-  , house
-  , salary
-  , reimbursement
-  , paypal
-  , gym
-  , transport
-  , cash
-  , cashback
-  , bike
-  , health
-  , selfcare
-  , entertainment
-  , rent
-  , services
-  , creditcard
-  , incoming
-  , volksuni
-  , tax
-  , internal
-  , others
+  ( inferCategory
   ) where
 
 import qualified Data.Maybe        as M
 import qualified Data.String.Utils as S
 import qualified Text.Regex        as R
+import           Types
 
 match :: R.Regex -> String -> Bool
 match x = M.isJust . R.matchRegex x
@@ -123,9 +100,6 @@ gym = mkUnionRegex ["fit for free"]
 transport :: R.Regex
 transport = mkUnionRegex ["ns-", "ns ", "ov-chipkaart"]
 
-cash :: R.Regex
-cash = mkUnionRegex ["hoogstr", "banco", "betaalverzoek"]
-
 cashback :: R.Regex
 cashback = mkUnionRegex ["sepa overboeking"] -- review this one
 
@@ -162,12 +136,6 @@ services = mkUnionRegex ["evides", "tele2", "caiway"]
 creditcard :: R.Regex
 creditcard = mkUnionRegex ["creditcard"]
 
-volksuni :: R.Regex
-volksuni = mkUnionRegex ["volksuni"]
-
-incoming :: R.Regex
-incoming = mkUnionRegex ["tikkie"]
-
 tax :: R.Regex
 tax = mkUnionRegex ["iberia holding", "belastingdienst"]
 
@@ -176,3 +144,75 @@ internal = mkUnionRegex ["cb gill desia cj"]
 
 others :: R.Regex
 others = mkUnionRegex ["easypayextra", "transferwise"]
+
+cashRE :: R.Regex
+cashRE = mkUnionRegex ["hoogstr", "banco", "betaalverzoek"]
+
+volksuni :: R.Regex
+volksuni = mkUnionRegex ["volksuni"]
+
+incomingRE :: R.Regex
+incomingRE = mkUnionRegex ["tikkie"]
+
+cash :: String -> Float -> Bool
+cash desc amount = match cashRE desc && amount < 0
+
+study :: String -> Float -> Bool
+study desc amount = match volksuni desc && amount < (-10.0)
+
+volksuniEat :: String -> Float -> Bool
+volksuniEat desc amount = match volksuni desc && amount >= (-10.0)
+
+incoming :: String -> Float -> Bool
+incoming desc amount = match incomingRE desc && amount > 0
+
+descMatchers :: [(R.Regex, Category)]
+descMatchers =
+  [ (restaurants, EatOut)
+  , (food, EatOut)
+  , (salary, Salary)
+  , (internal, Internal)
+  , (services, Services)
+  , (rent, Rent)
+  , (creditcard, CreditCard)
+  , (paypal, PayPal)
+  , (transport, Transport)
+  , (clothes, Clothes)
+  , (markets, Groceries)
+  , (house, House)
+  , (bike, Bikes)
+  , (health, Health)
+  , (selfcare, SelfCare)
+  , (gym, Gym)
+  , (others, Others)
+  , (tax, Tax)
+  , (cashback, CashBack)
+  , (entertainment, Entertainment)
+  , (reimbursement, Reimbursement)
+  ]
+
+matchByDesc :: String -> (Bool, Category)
+matchByDesc desc = foldr f (False, Unknown) descMatchers
+  where
+    f (_, _) (True, v) = (True, v)
+    f (m, r) (_, _)    = (match m desc, r)
+
+descAndAmountMatchers :: [(String -> Float -> Bool, Category)]
+descAndAmountMatchers =
+  [(cash, Cash), (study, Study), (volksuniEat, EatOut), (incoming, Incoming)]
+
+matchByDescAndAmount :: String -> Float -> (Bool, Category)
+matchByDescAndAmount desc amount =
+  foldr f (False, Unknown) descAndAmountMatchers
+  where
+    f (_, _) (True, v) = (True, v)
+    f (m, r) (_, _)    = (m desc amount, r)
+
+inferCategory :: Float -> String -> Category
+inferCategory amount desc
+  | ma = ra
+  | mb = rb
+  | otherwise = Unknown
+  where
+    (ma, ra) = matchByDesc desc
+    (mb, rb) = matchByDescAndAmount desc amount
