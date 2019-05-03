@@ -1,5 +1,5 @@
 module Parsing
-  ( entries
+  ( parseEntries
   ) where
 
 import qualified Data.Char         as C
@@ -39,6 +39,6 @@ entryOfRow (account, cur, d1, before', after', d2, deb, desc) =
     before'' = readAmount before'
     balance' = Balance {before = before'', after = after'', debit = debit'}
 
-entries :: String -> [Entry]
-entries =
+parseEntries :: String -> [Entry]
+parseEntries =
   map entryOfRow . M.mapMaybe (row . S.split "\t" . S.strip) . lines . S.strip

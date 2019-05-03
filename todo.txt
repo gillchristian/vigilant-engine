@@ -1,6 +1,6 @@
-- [ ] parse dates
 - [ ] extract useful data from description
 - [ ] group by months & categories
+- [x] parse dates
 - [x] split in modules
 - [x] use stack file
 
