@@ -25,6 +25,8 @@ library
                      , Matchers 
                      , Date
                      , Types
+                     , Utils
+                     , System
 
   build-depends:       base ^>= 4.12.0.0
                      , regex-compat ^>= 0.95.1

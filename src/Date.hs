@@ -5,8 +5,8 @@ module Date
   , readFormatedDate
   ) where
 
-import qualified Data.Aeson   as Aeson
-import qualified Text.Regex   as R
+import qualified Data.Aeson as Aeson
+import qualified Text.Regex as R
 
 newtype Date =
   Date (String, String, String)

@@ -2,21 +2,21 @@ module Main
   ( main
   ) where
 
-import qualified Data.Aeson         as Aeson
-import           Parsing            (parseEntries)
-import qualified System.Environment as Env
-import qualified System.IO          as Sys
+import qualified Data.Aeson as Aeson
+import           Parsing    (parseEntries)
+import           System     (argOr, putStderr)
 
-putStderr :: String -> IO ()
-putStderr = Sys.hPutStrLn Sys.stderr
+parse :: String -> Aeson.Value
+parse = Aeson.toJSON . parseEntries
 
-doStuff :: FilePath -> FilePath -> IO ()
-doStuff input output =
-  Aeson.encodeFile output =<< Aeson.toJSON . parseEntries <$> readFile input
+parseToFile :: FilePath -> FilePath -> IO ()
+parseToFile input output =
+  pure parse <*> readFile input >>= Aeson.encodeFile output
 
 main :: IO ()
 main = do
-  (input:output:_) <- Env.getArgs -- TODO handle missing files
+  input <- argOr 0 "statements.txt"
+  output <- argOr 1 "data.json"
   putStderr $ "Processing statements from: \"" ++ input ++ "\""
-  doStuff input output
-  putStderr $ "Data written to: \"" ++ input ++ "\""
+  parseToFile input output
+  putStderr $ "Data written to: \"" ++ output ++ "\""
