@@ -54,11 +54,11 @@ data Balance = Balance
   } deriving (Show, Generics.Generic, Aeson.ToJSON)
 
 data Entry = Entry
-  { acc         :: String
-  , currency    :: Currency
-  , date1       :: Maybe Date.Date
-  , date2       :: Maybe Date.Date
-  , balance     :: Balance
-  , description :: String
-  , category    :: Category
+  { acc             :: String
+  , currency        :: Currency
+  , transactionDate :: Maybe Date.Date
+  , valueDate       :: Maybe Date.Date
+  , balance         :: Balance
+  , description     :: String
+  , category        :: Category
   } deriving (Show, Generics.Generic, Aeson.ToJSON)

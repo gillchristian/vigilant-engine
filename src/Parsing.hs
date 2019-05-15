@@ -27,8 +27,8 @@ entryOfRow (account, cur, d1, before', after', d2, deb, desc) =
   Entry
     { acc = account
     , currency = readCurrency cur
-    , date1 = Date.readDate d1
-    , date2 = Date.readDate d2
+    , transactionDate = Date.readDate d1
+    , valueDate = Date.readDate d2
     , balance = balance'
     , description = desc
     , category = Mx.inferCategory debit' $ map C.toLower desc

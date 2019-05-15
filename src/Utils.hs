@@ -1,5 +1,6 @@
 module Utils
-  (nth) where
+  ( nth
+  ) where
 
 nth :: [a] -> Int -> Maybe a
 nth xs n
