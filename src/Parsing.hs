@@ -30,14 +30,17 @@ entryOfRow (account, cur, d1, before', after', d2, deb, desc) =
     , transactionDate = Date.readDate d1
     , valueDate = Date.readDate d2
     , balance = balance'
-    , description = desc
-    , category = Mx.inferCategory debit' $ map C.toLower desc
+    , description = Nothing
+    , originalDesc = desc
+    , category = category'
     }
   where
     debit' = readAmount deb
     after'' = readAmount after'
     before'' = readAmount before'
     balance' = Balance {before = before'', after = after'', debit = debit'}
+    desc' = map C.toLower desc
+    category' = Mx.inferCategory debit' desc'
 
 parseEntries :: String -> [Entry]
 parseEntries =

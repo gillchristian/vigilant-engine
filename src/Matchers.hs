@@ -34,6 +34,12 @@ restaurants =
     , "bokaal"
     , "hmshost"
     , "sfeertje"
+    , "gilles"
+    , "belvedair"
+    , "casino" -- we only would eat at a casino lol
+    , "kfc"
+    , "las sirenas"
+    , "de beren"
     ]
 
 food :: R.Regex
@@ -57,6 +63,7 @@ food =
     , "takeaway"
     , "pho"
     , "snackbar"
+    , "doner"
     ]
 
 markets :: R.Regex
@@ -68,6 +75,7 @@ markets =
     , "libra"
     , "nightshop"
     , "ah to go"
+    , "ah de wolf"
     , "kruidvat"
     , "bakkerij"
     , "carrefour"
@@ -80,7 +88,8 @@ markets =
 
 clothes :: R.Regex
 clothes =
-  mkUnionRegex ["decathlon", "vans", "c&a", "zara", "hunkemoeller", "bershka"]
+  mkUnionRegex
+    ["decathlon", "vans", "c&a", "zara", "hunkemoeller", "bershka", "h & m"]
 
 house :: R.Regex
 house = mkUnionRegex ["blokker", "ikea", "abc store", "hema", "coolblue"]
@@ -89,7 +98,7 @@ salary :: R.Regex
 salary = mkUnionRegex ["salary"]
 
 reimbursement :: R.Regex
-reimbursement = mkUnionRegex ["reimbursement", "refund", "ariel avendano"]
+reimbursement = mkUnionRegex ["reimbursement", "refund"]
 
 paypal :: R.Regex
 paypal = mkUnionRegex ["paypal"]
@@ -98,10 +107,7 @@ gym :: R.Regex
 gym = mkUnionRegex ["fit for free"]
 
 transport :: R.Regex
-transport = mkUnionRegex ["ns-", "ns ", "ov-chipkaart"]
-
-cashback :: R.Regex
-cashback = mkUnionRegex ["sepa overboeking"] -- review this one
+transport = mkUnionRegex ["ns-", "ns ", "ov-chipkaart", "transavia"]
 
 bike :: R.Regex
 bike = mkUnionRegex ["bike", "fiet"]
@@ -152,7 +158,7 @@ volksuni :: R.Regex
 volksuni = mkUnionRegex ["volksuni"]
 
 incomingRE :: R.Regex
-incomingRE = mkUnionRegex ["tikkie"]
+incomingRE = mkUnionRegex ["tikkie", "sepa overboeking", "ariel avendano"]
 
 cash :: String -> Float -> Bool
 cash desc amount = match cashRE desc && amount < 0
@@ -166,53 +172,30 @@ volksuniEat desc amount = match volksuni desc && amount >= (-10.0)
 incoming :: String -> Float -> Bool
 incoming desc amount = match incomingRE desc && amount > 0
 
-descMatchers :: [(R.Regex, Category)]
-descMatchers =
-  [ (restaurants, EatOut)
-  , (food, EatOut)
-  , (salary, Salary)
-  , (internal, Internal)
-  , (services, Services)
-  , (rent, Rent)
-  , (creditcard, CreditCard)
-  , (paypal, PayPal)
-  , (transport, Transport)
-  , (clothes, Clothes)
-  , (markets, Groceries)
-  , (house, House)
-  , (bike, Bikes)
-  , (health, Health)
-  , (selfcare, SelfCare)
-  , (gym, Gym)
-  , (others, Others)
-  , (tax, Tax)
-  , (cashback, CashBack)
-  , (entertainment, Entertainment)
-  , (reimbursement, Reimbursement)
-  ]
-
-matchByDesc :: String -> (Bool, Category)
-matchByDesc desc = foldr f (False, Unknown) descMatchers
-  where
-    f (_, _) (True, v) = (True, v)
-    f (m, r) (_, _)    = (match m desc, r)
-
-descAndAmountMatchers :: [(String -> Float -> Bool, Category)]
-descAndAmountMatchers =
-  [(cash, Cash), (study, Study), (volksuniEat, EatOut), (incoming, Incoming)]
-
-matchByDescAndAmount :: String -> Float -> (Bool, Category)
-matchByDescAndAmount desc amount =
-  foldr f (False, Unknown) descAndAmountMatchers
-  where
-    f (_, _) (True, v) = (True, v)
-    f (m, r) (_, _)    = (m desc amount, r)
-
 inferCategory :: Float -> String -> Category
 inferCategory amount desc
-  | ma = ra
-  | mb = rb
+  | match reimbursement desc = Reimbursement -- hast to be before eat out
+  | match restaurants desc = EatOut
+  | match food desc = EatOut
+  | match salary desc = Salary
+  | match internal desc = Internal
+  | match services desc = Services
+  | match rent desc = Rent
+  | match creditcard desc = CreditCard
+  | match paypal desc = PayPal
+  | match transport desc = Transport
+  | match clothes desc = Clothes
+  | match markets desc = Groceries
+  | match house desc = House
+  | match bike desc = Bikes
+  | match health desc = Health
+  | match selfcare desc = SelfCare
+  | match gym desc = Gym
+  | match others desc = Others
+  | match tax desc = Tax
+  | match entertainment desc = Entertainment
+  | cash desc amount = Cash
+  | study desc amount = Study
+  | volksuniEat desc amount = EatOut
+  | incoming desc amount = Incoming
   | otherwise = Unknown
-  where
-    (ma, ra) = matchByDesc desc
-    (mb, rb) = matchByDescAndAmount desc amount

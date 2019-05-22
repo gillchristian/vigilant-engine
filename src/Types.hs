@@ -31,7 +31,6 @@ data Category
   | Reimbursement
   | Incoming
   | Cash -- taken from ATM
-  | CashBack
   | Study
   | Health
   | SelfCare
@@ -59,6 +58,7 @@ data Entry = Entry
   , transactionDate :: Maybe Date.Date
   , valueDate       :: Maybe Date.Date
   , balance         :: Balance
-  , description     :: String
+  , description     :: Maybe String
+  , originalDesc    :: String
   , category        :: Category
   } deriving (Show, Generics.Generic, Aeson.ToJSON)
