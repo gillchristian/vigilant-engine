@@ -11,7 +11,7 @@ parse = Aeson.toJSON . parseEntries
 
 parseToFile :: FilePath -> FilePath -> IO ()
 parseToFile input output =
-  pure parse <*> readFile input >>= Aeson.encodeFile output
+  parse <$> readFile input >>= Aeson.encodeFile output
 
 main :: IO ()
 main = do

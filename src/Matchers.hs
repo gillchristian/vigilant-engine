@@ -40,6 +40,7 @@ restaurants =
     , "kfc"
     , "las sirenas"
     , "de beren"
+    , "melly's cookies"
     ]
 
 food :: R.Regex
@@ -64,6 +65,7 @@ food =
     , "pho"
     , "snackbar"
     , "doner"
+    , "eethuis"
     ]
 
 markets :: R.Regex
@@ -84,15 +86,26 @@ markets =
     , "wijnhandel"
     , "plus"
     , "spar"
+    , "notenshop"
+    , "holland & barrett"
     ]
 
 clothes :: R.Regex
 clothes =
   mkUnionRegex
-    ["decathlon", "vans", "c&a", "zara", "hunkemoeller", "bershka", "h & m"]
+    [ "decathlon"
+    , "vans"
+    , "c&a"
+    , "zara"
+    , "hunkemoeller"
+    , "bershka"
+    , "h&m"
+    , "h & m"
+    ]
 
 house :: R.Regex
-house = mkUnionRegex ["blokker", "ikea", "abc store", "hema", "coolblue"]
+house =
+  mkUnionRegex ["blokker", "ikea", "abc store", "hema", "coolblue", "bol.com"]
 
 salary :: R.Regex
 salary = mkUnionRegex ["salary"]
@@ -131,6 +144,8 @@ entertainment =
     , "ahoy"
     , "stichting worm"
     , "knvb"
+    , "ticketswap"
+    , "eventbrite"
     ]
 
 rent :: R.Regex
@@ -143,7 +158,7 @@ creditcard :: R.Regex
 creditcard = mkUnionRegex ["creditcard"]
 
 tax :: R.Regex
-tax = mkUnionRegex ["iberia holding", "belastingdienst"]
+tax = mkUnionRegex ["iberia holding", "belasting"]
 
 internal :: R.Regex
 internal = mkUnionRegex ["cb gill desia cj"]
