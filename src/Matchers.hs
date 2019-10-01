@@ -1,5 +1,6 @@
 module Matchers
   ( inferCategory
+  , parseDesc
   ) where
 
 import qualified Data.Maybe        as M
@@ -214,3 +215,35 @@ inferCategory amount desc
   | volksuniEat desc amount = EatOut
   | incoming desc amount = Incoming
   | otherwise = Unknown
+
+getMatch :: String -> R.Regex -> Maybe String
+getMatch s re = third <$> R.matchRegexAll re s
+  where
+    third (_, _, a, _) = a
+
+parseDesc :: String -> Category -> Maybe String
+-- TODO how to join two ?
+parseDesc desc Groceries     = getMatch desc markets
+parseDesc desc EatOut        = getMatch desc restaurants
+parseDesc desc Transport     = getMatch desc restaurants
+parseDesc _ Internal         = Just "Internal transaction"
+parseDesc _ Rent             = Just "Rent"
+parseDesc desc Services      = getMatch desc services
+parseDesc _ Salary           = Just "Salary"
+parseDesc _ Reimbursement    = Just "Reimbursed"
+parseDesc desc Incoming      = getMatch desc incomingRE
+parseDesc _ Cash             = Just "ATM" -- TODO match ATM names to use here
+parseDesc desc Study         = getMatch desc volksuni
+parseDesc desc Health        = getMatch desc health
+parseDesc desc SelfCare      = getMatch desc selfcare
+parseDesc desc Tax           = getMatch desc tax
+parseDesc desc House         = getMatch desc house
+parseDesc desc Gym           = getMatch desc gym
+parseDesc desc Entertainment = getMatch desc entertainment
+parseDesc desc Clothes       = getMatch desc clothes
+parseDesc desc Bikes         = getMatch desc bike
+parseDesc desc CreditCard    = getMatch desc creditcard
+parseDesc desc PayPal        = getMatch desc paypal
+parseDesc desc Others        = getMatch desc others
+parseDesc _ Unknown          = Just "Unknown"
+

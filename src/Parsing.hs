@@ -31,6 +31,7 @@ entryOfRow (account, cur, d1, before', after', d2, deb, desc) =
     , valueDate = Date.readDate d2
     , balance = balance'
     , description = Nothing
+    -- , description = Mx.parseDesc desc' category'
     , originalDesc = desc
     , category = category'
     }
